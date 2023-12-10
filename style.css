@@ -1,0 +1,118 @@
+@font-face {
+    font-family: 'YouTubeSans';
+    src: url('assets/fonts/default/YouTubeSans-Medium.woff2') format('woff2'),
+    url('assets/fonts/default/YouTubeSans-Medium.ttf') format('ttf');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --thm-font: 'YouTubeSans', sans-serif;
+    --heading-font: 'YouTubeSans', sans-serif;
+    --thm-base: #ffd61d;
+    --thm-base-rgb: 255, 214, 29;
+    --thm-black: #221f20;
+    --thm-black-rgb: 34, 31, 32;
+    --thm-grey: #f3f3f3;
+    --thm-pink: #f1afe7;
+  }
+  *,
+  ::after,
+  ::before {
+    box-sizing: border-box;
+  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: var(--thm-font);
+}
+
+.center-Obj {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+}
+
+#zappar-placement-ui {
+  position: absolute;
+  width: 150px;
+  bottom: 15%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: none;
+  box-shadow: 6px -6px 0px var(--thm-base);
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
+  text-align: center;
+  font-family: var(--thm-font);
+  font-weight: bolder;
+  z-index: 3;
+  padding: 10px;
+  /* margin: 50px; */
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+#recenterBtn {
+  position: absolute;
+  z-index: 9999999;
+  left: 1vh;
+  bottom: 1vh;
+  max-width: 12vw;
+  rotate: -90deg;
+}
+
+.pulse-once { animation: pulse-once 0.2s cubic-bezier(0.785, 0.135, 0.150, 0.860) both; }
+@keyframes pulse-once {
+  0% {transform: scale(1);}
+  50% {transform: scale(0.8);}
+  100% {transform: scale(1);}
+}
+
+.clickable:active {
+  transform: scale(0.2);
+}
+
+#videoElement {
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -100;
+    /* Setting width & height to auto prevents the browser from stretching or squishing the video */
+    width: auto;
+    height: auto;
+
+    /* Center the video */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  text {
+    font-size: 50px;
+    font-weight: bold;
+    fill: green;
+    stroke: white;
+    stroke-width: 15px;
+  }
+  .stroke-behind {
+    paint-order: stroke fill;
+  }
+
+/* https://stackoverflow.com/a/4407335 */
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }

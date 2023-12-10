@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <!-- <script src="https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js"></script> -->
+
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="description"
+      content="Celebrating #15YearsofYouTube with fans and creators through a unique immersive AR experience—#15YearsofYouTube Superfan Challenge."
+    />
+    <title>#15YearsofYouTube Superfan Challenge</title>
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="#15YearsofYouTube Superfan Challenge" />
+    <meta
+      property="og:description"
+      content="Celebrating #15YearsofYouTube with fans and creators through a unique immersive AR experience—#15YearsofYouTube Superfan Challenge."
+    />
+    <meta property="og:image" content="https://i.imgur.com/mdmrUL9.jpg" />
+    <meta
+      property="og:image:alt"
+      content="#15YearsofYouTube Superfan Challenge Image"
+    />
+
+    <!-- Twitter Card Meta Tags (optional) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="#15YearsofYouTube Superfan Challenge" />
+    <meta
+      name="twitter:description"
+      content="Celebrating #15YearsofYouTube with fans and creators through a unique immersive AR experience—#15YearsofYouTube Superfan Challenge."
+    />
+    <meta name="twitter:image" content="https://i.imgur.com/mdmrUL9.jpg" />
+
+    <!-- ======== FACICON ======== -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/images/favicon.ico"
+    />
+
+    <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
+    <script
+      crossorigin="anonymous"
+      src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"
+    ></script>
+    <script
+      crossorigin="anonymous"
+      src="https://unpkg.com/@ekolabs/aframe-spritesheet-component@1.2.0/dist/aframe-spritesheet-component.min.js"
+    ></script>
+    <script
+      crossorigin="anonymous"
+      src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/gh/diarmidmackenzie/instanced-mesh@v0.7.0/src/instanced-mesh.min.js"></script>
+    <!-- <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"
+      integrity="sha512-Eak/29OTpb36LLo2r47IpVzPBLXnAMPAVypbSZiZ4Qkf8p/7S/XRG5xp7OKWPPYfJT6metI+IORkR5G8F900+g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script> -->
+    <!--   <script
+      src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"
+      type="module"
+    ></script> -->
+
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"
+    ></script>
+
+    <script
+      crossorigin="anonymous"
+      defer
+      src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"
+    ></script>
+
+    <script
+      crossorigin="anonymous"
+      defer
+      src="https://html2canvas.hertzen.com/dist/html2canvas.js"
+    ></script>
+    <script defer src="./firebase.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="index.css" />
+    <script src="components.js" defer></script>
+    <script>
+      var mappingForCreators = {
+        CC01: "Pragati Verma",
+        CC02: "Payal Gaming",
+        CC03: "Slayy Point",
+        CC04: "Pooh in Korea",
+        CC05: "Bong Guy",
+        CC06: "Anshu Bisht",
+        CC07: "Triggered Insaan",
+        CC08: "Carry Minati",
+        CC09: "Ashish Chanchlani",
+        CC10: "Harsha Sai",
+        CC11: "Techno Gamerz",
+        CC12: "Mythpat",
+        CC13: "Fukra Insaan",
+        CC14: "Gopali",
+        CC15: "Prajakta",
+      };
+      // Function to show an alert on back press or page unload
+      /*   function showAlertOnBackPress() {
+        // Event listener for the beforeunload event
+        window.addEventListener("beforeunload", function (event) {
+          // Cancel the default event (prevents the browser from navigating away immediately)
+          event.preventDefault();
+
+          // Display a custom message in the alert dialog
+          var confirmationMessage = "Are you sure you want to leave?";
+
+          // Standard for most browsers
+          event.returnValue = confirmationMessage;
+
+          // For some older browsers
+          return "Leaving this page will reset the wizard";;
+        });
+      }
+
+      // Call the function to set up the alert on back press
+      showAlertOnBackPress(); */
+
+      AFRAME.registerComponent("match-sphere", {
+        schema: {
+          target: {
+            type: "selector",
+          },
+        },
+        init() {
+          //  console.log('match exec')
+          const sphere = document.getElementById('foo');
+
+          const { imageWidth } = this.data;
+          const { imageHeight } = this.data;
+
+          this.el.setAttribute("radius", sphere.getAttribute("radius"));
+          this.el.setAttribute("position", sphere.getAttribute("position"));
+          this.el.sceneEl.addEventListener("loaded", () => {
+            //   console.log('loaded exec')
+            setTimeout((e) => {
+              const mesh = this.el.getObject3D("mesh");
+              const axis = sphere.getAttribute("position").clone();
+              if(sphere){
+               // console.log('sphere loaded')
+                if(mesh){
+                 // console.log('mesh exec')
+                  axis.add(
+                  mesh.geometry.boundingSphere.center.clone().multiplyScalar(-1)
+                );
+                axis.normalize();
+                this.el.object3D.translateOnAxis(axis, 0.1);
+                this.el.object3D.frustumCulled = true;
+                }
+              }
+            }, 200);
+          });
+        },
+      });
+      let counter = 0;
+      AFRAME.registerComponent("click-sphere", {
+        init() {
+          //  console.log(this.el)
+          this.el.setAttribute("radius", "4.01");
+          const handleClick = () => {
+            console.log(this.el);
+
+            const animEl = document.getElementById(`${this.el.id}Cluster`);
+            console.log(animEl);
+            animEl.setAttribute("animation", {
+              property: "components.material.material.opacity",
+              dur: 800,
+              isRawProperty: true,
+              easing: "easeInOutQuad",
+              loop: false,
+              to: "1",
+            });
+
+            // const groupEl = document.getElementById(`${this.el.id}Cluster`);
+
+            //play audio
+            let creatorAudio = document.querySelector(
+              `#${this.el.getAttribute("audio-id")}`
+            );
+
+            try {
+              const createorName  = mappingForCreators[this.el
+                  .getAttribute("audio-id")
+                  ?.replace("audio", "")];
+              window.analyticsLog(
+                `Creator Revealed :${createorName}`
+              );
+            } catch (e) {
+              console.log(e);
+            }
+
+            if (creatorAudio && window.soundEffectAllowed) {
+              creatorAudio.play();
+            }
+
+            const lastLayerClustorId = this.el.getAttribute("last-id");
+            if (lastLayerClustorId) {
+              //animate last layer also
+              const lastLayerClustor =
+                document.getElementById(lastLayerClustorId);
+              lastLayerClustor.setAttribute("animation", {
+                property: "components.material.material.opacity",
+                dur: 800,
+                isRawProperty: true,
+                easing: "easeInOutQuad",
+                loop: false,
+                to: "1",
+              });
+
+              const animation = { progress: 0 };
+
+              const tween = new TWEEN.Tween(animation)
+                .to({ progress: 1 }, 3000)
+                .onUpdate(() => {
+                  lastLayerClustor.setAttribute(
+                    "sprite-sheet",
+                    "progress",
+                    animation.progress
+                  );
+                  //console.log('exec opacity')
+                });
+
+              tween.onComplete(() => {
+                animation.progress = 0;
+              });
+              tween.chain(tween);
+              tween.start();
+
+              function animate(time) {
+                requestAnimationFrame(animate);
+                TWEEN.update(time);
+              }
+              requestAnimationFrame(animate);
+            }
+
+            const animation = { progress: 0 };
+
+            const tween = new TWEEN.Tween(animation)
+              .to({ progress: 1 }, 3000)
+              .onUpdate(() => {
+                animEl.setAttribute(
+                  "sprite-sheet",
+                  "progress",
+                  animation.progress
+                );
+                //console.log('exec opacity')
+              });
+
+            tween.onComplete(() => {
+              animation.progress = 0;
+            });
+            tween.chain(tween);
+            tween.start();
+
+            function animate(time) {
+              requestAnimationFrame(animate);
+              TWEEN.update(time);
+            }
+            requestAnimationFrame(animate);
+
+            if (!this.el.classList.contains("creatorClicked")) {
+              counter++;
+              // console.log(counter)
+              const newCounter =
+                counter < 10 ? (counter = "0" + counter) : counter;
+              document.getElementById(
+                "creatorCount"
+              ).src = `assets/images/score${newCounter}.png`;
+              // console.log(newCounter)
+              const creatorsText = document.querySelector(".creators-text");
+              if (newCounter === "05") {
+                // console.log('5 reached')
+                creatorsText.innerHTML =
+                  " <p>You know how it&#39;s done 👏</p>";
+
+                //hide afer 5sec
+
+                setTimeout(() => {
+                  creatorsText.innerHTML = "";
+                }, 5000);
+              } else if (newCounter === 10) {
+                // console.log('10 reached')
+                creatorsText.innerHTML =
+                  " <p>You&#39;re on a roll,<br/>keep going 💪</p>";
+
+                setTimeout(() => {
+                  creatorsText.innerHTML = "";
+                }, 5000);
+              } else if (newCounter === 15) {
+                if (idleTimer) {
+                  clearInterval(idleTimer);
+                }
+                try {
+                  window.analyticsLog(`All Creators Revealed`);
+                } catch (e) {
+                  console.log(e);
+                }
+
+                //dome rotation after end
+                const dome = document.querySelector("#group");
+                dome.setAttribute("animation__spin", {
+                  property: "object3D.rotation.y",
+                  from: 214,
+                  to: 574,
+                  dur: 9000,
+                  dir: "normal",
+                  loop: true,
+                  easing: "linear",
+                });
+
+                //animation of last layer
+                /*    const lastLayerElements =
+                  document.querySelectorAll(".last-layer");
+                  const animations = [];
+                if (lastLayerElements && lastLayerElements.length) {
+                  
+                  for (
+                    let index = 0;
+                    index < lastLayerElements.length;
+                    index++
+                  ) {
+                    const lsElm = lastLayerElements[index];
+                    lsElm.setAttribute("animation", {
+                      property: "components.material.material.opacity",
+                      dur: 800,
+                      isRawProperty: true,
+                      easing: "easeInOutQuad",
+                      loop: false,
+                      to: "1",
+                    });
+
+                    const animation = { progress: 0 };
+
+                    const tween = new TWEEN.Tween(animation)
+                      .to({ progress: 1 }, 3000)
+                      .onUpdate(() => {
+                        lsElm.setAttribute(
+                          "sprite-sheet",
+                          "progress",
+                          animation.progress
+                        );
+                      });
+
+                    tween.onComplete(() => {
+                      animation.progress = 0;
+                      //loop
+                    });
+
+                    animations.push(tween);
+                  }
+                }
+
+                for (let i = 0; i < animations.length - 1; i++) {
+                  animations[i].chain(animations[i + 1]);
+                }
+
+                // Start the first tween
+                animations[0].start();
+
+                function animate(time) {
+                  requestAnimationFrame(animate);
+                  TWEEN.update(time);
+                }
+
+                requestAnimationFrame(animate); */
+
+                // console.log('15 reached')
+                document.getElementById("confettiIframe").style.display =
+                  "block";
+                document
+                  .getElementById("numberBox")
+                  .classList.add("numberCenter");
+                document.querySelector("#crowd-audio").play();
+                setTimeout(() => {
+                  document.querySelector("#goBtn").style.display = "flex";
+                  creatorsText.innerHTML = " <p>Time to flex your win 🎉</p>";
+                }, 500);
+
+                setTimeout(() => {
+                  document.getElementById("confettiIframe").style.display =
+                    "none";
+                }, 5000);
+              }
+            }
+            this.el.classList.add("creatorClicked");
+          };
+          this.el.addEventListener("click", handleClick);
+          this.el.addEventListener("touchstart", handleClick);
+        },
+      });
+    </script>
+  </head>
+
+  <body>
+    <a-scene landing-page stats xrextras-gesture-detector vr-mode-ui="enabled: false">
+      <a-assets>
+        <img
+          id="out_01"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC01_1100x800-Flipped.png"
+        />
+        <img
+          id="out_05"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC05_1300x1000-Flipped.png"
+        />
+        <img
+          id="out_02"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC02_1100x800-Flipped.png"
+        />
+        <img
+          id="out_14"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC14_2000x750-Flipped.png"
+        />
+        <img
+          id="out_11"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC11_1600x1000-Flipped.png"
+        />
+        <img
+          id="out_12"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC12_1600x1000-Flipped.png"
+        />
+        <img
+          id="out_15"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC15_2000x750-Flipped.png"
+        />
+        <img
+          id="out_10"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC10_1300x1000-Flipped.png"
+        />
+
+        <img
+          id="last_1"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC16_2000x750-Flipped.png"
+        />
+        <img
+          id="last_4"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC17_2000x750-Flipped.png"
+        />
+        <img
+          id="last_3"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC18_2000x750-Flipped.png"
+        />
+        <img
+          id="last_2"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC19_2000x750-Flipped.png"
+        />
+
+        <img
+          id="mid_06"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC06_1300x1000-Flipped.png"
+        />
+        <img
+          id="mid_07"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC07_1300x1000-Flipped.png"
+        />
+        <img
+          id="mid_03"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC03_1100x800-Flipped.png"
+        />
+        <img
+          id="mid_00"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC00_800x800-Flipped.png"
+        />
+        <img
+          id="mid_08"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC08_1300x1000-Flipped.png"
+        />
+        <img
+          id="mid_09"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC09_1300x1000-Flipped.png"
+        />
+
+        <img
+          id="top_04"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC04_1100x800-Flipped.png"
+        />
+        <img
+          id="top_13"
+          crossorigin="anonymous"
+          src="./assets/clusters/CC13_1600x1000-Flipped.png"
+        />
+
+        <a-mixin
+          id="image2"
+          material="shader:flat; side: double; transparent:true; opacity:0.3; alphaTest:0.2"
+          match-sphere="target: #foo"
+          rotation="0 180 0"
+          radius="3"
+          
+        ></a-mixin>
+        <a-mixin
+          id="anim"
+          material="shader:flat; side: back; transparent:true; opacity:0.3; alphaTest:0.1; repeat: -1"
+          match-sphere="target: #foo"
+          click-sphere
+          instanced-mesh-member="mesh:#mesh1"
+          rotation="0 180 0"
+          radius="2.8"
+        ></a-mixin>
+
+        <audio
+          id="audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/bg.mp3"
+          response-type="arraybuffer"
+        ></audio>
+
+        <audio
+          id="CC01-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC01.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC02-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC02.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC03-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC03.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC04-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC04.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC05-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC05.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC06-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC06.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC07-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC07.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC08-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC08.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC09-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC09.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC10-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC10.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC11-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC11.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC12-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC12.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC13-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC13.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC14-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC14.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="CC15-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/CC15.mp3"
+          response-type="arraybuffer"
+        ></audio>
+        <audio
+          id="crowd-audio"
+          preload="auto"
+          class="a-sound"
+          crossorigin="anonymous"
+          src="./assets/sounds/short-crowd-cheer.mp3"
+          response-type="arraybuffer"
+        ></audio>
+      </a-assets>
+      <!-- Ask user for camera permissions, display some text if permission is denied -->
+      <!--    <a-entity zappar-permissions-ui id="permissions"></a-entity> -->
+      <!-- shows a full-page dialog that informs the user they're using an unsupported browser -->
+      <!-- <a-entity zappar-compatibility-ui id="compatibility"></a-entity> -->
+      <a-entity
+        light="
+      type: directional; 
+      castShadow: true; 
+      color: white; 
+      intensity: 0.5"
+        position="5 10 7"
+      >
+      </a-entity>
+
+      <a-light type="ambient" intensity="0.5"></a-light>
+      <!--       <a-camera zappar-camera /> -->
+      <!-- <a-entity id="rig" rotation="45 0 0">
+        <a-camera
+        zappar-camera
+        look-controls wasd-controls
+        id="camera"
+        position="0 0 0"
+        raycaster="objects: .cantap"
+        cursor="fuse: false; rayOrigin: mouse;"
+      ></a-camera>
+      </a-entity> -->
+      <a-entity
+        camera
+        look-controls
+        position="0 40 0"
+        raycaster="objects: .cantap"
+        cursor="fuse: false; rayOrigin: mouse;"
+      ></a-entity>
+
+      <!-- Setup our instant tracker and start it in placement mode so the user can -->
+      <!-- choose a location for the object -->
+      <!-- <a-entity zappar-instant="placement-mode: true; anchorPoseOffset: 0 -1.5 -6;" id="instant-tracker"> -->
+      <a-entity
+        id="group"
+        no-cull
+        rotation="0 214 0"
+        position="0 -60 0"
+        scale="100 100 100"
+      >
+      
+        <a-sphere
+          id="foo"
+          position="0 0 0"
+          radius="5.05"
+          theta-length="145"
+          material="color: #59A1FF; shader: flat; side: double; opacity:0.7; transparent:false; wireframe:false;"
+        ></a-sphere>
+        <a-sphere id="mesh1" instanced-mesh></a-sphere>
+        <!-- bottom ring layer CC01,CC05,CC02,CC14,CC11,CC12,CC15,CC10 -->
+        <a-sphere
+          id="out_01Img"
+          mixin="anim"
+          class="cantap"
+          last-id="last_16ImgCluster"
+          audio-id="CC01-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 15.610; thetaLength: 28.890; thetaStart: 78.510; phiStart:47.560"
+        ></a-sphere>
+        <a-entity
+          id="out_01ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #out_01"
+          sprite-sheet="cols:5; rows:6; progress:0;"
+          instanced-mesh-member
+          geometry="phiLength: 38.840; thetaLength: 50.000; thetaStart: 64.980; phiStart:31.710"
+        ></a-entity>
+
+        <a-sphere
+          id="out_05Img"
+          mixin="anim"
+          audio-id="CC05-audio"
+          class="cantap"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 12.350; thetaLength: 25.920; thetaStart: 72.390; phiStart:10.330"
+        ></a-sphere>
+        <a-sphere
+          id="out_05ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #out_05"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 48.160; thetaLength: 48.890; thetaStart: 66.800; phiStart:348.890"
+        ></a-sphere>
+
+        <a-sphere
+          id="out_02Img"
+          mixin="anim"
+          audio-id="CC02-audio"
+          class="cantap"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 12; thetaLength: 25; thetaStart: 84; phiStart:340"
+        ></a-sphere>
+        <a-sphere
+          id="out_02ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #out_02"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 40; thetaLength: 52; thetaStart: 68; phiStart:320"
+        ></a-sphere>
+
+        <a-sphere
+          id="out_14Img"
+          mixin="anim"
+          audio-id="CC14-audio"
+          last-id="last_19ImgCluster"
+          class="cantap"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 11.590; thetaLength: 35.150; thetaStart: 68.170; phiStart:291.530"
+        ></a-sphere>
+        <a-sphere
+          id="out_14ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #out_14"
+          sprite-sheet="cols:4; rows: 5; progress: 0.0;"
+          geometry="phiLength: 65.560; thetaLength: 47.700; thetaStart: 68.950; phiStart:258.080"
+        ></a-sphere>
+
+        <a-sphere
+          id="out_11Img"
+          mixin="anim"
+          class="cantap"
+          last-id="last_18ImgCluster"
+          audio-id="CC11-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 14.200; thetaLength: 25.580; thetaStart: 85.820; phiStart:229.420"
+        ></a-sphere>
+        <a-sphere
+          id="out_11ImgCluster"
+          mixin="image2"
+          class="cantap animate"
+          material="src: #out_11"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 56.860; thetaLength: 48.980; thetaStart: 73.890; phiStart:213.590"
+        ></a-sphere>
+
+        <a-sphere
+          id="out_12Img"
+          mixin="anim"
+          class="cantap"
+          audio-id="CC12-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 15.490; thetaLength: 34.210; thetaStart: 80.020; phiStart:187.440"
+        ></a-sphere>
+        <a-sphere
+          id="out_12ImgCluster"
+          mixin="image2"
+          class="cantap animate"
+          material="src: #out_12"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 51.900; thetaLength: 54.920; thetaStart: 67.970; phiStart:168.770"
+        ></a-sphere>
+
+        <a-sphere
+          id="out_15Img"
+          mixin="anim"
+          audio-id="CC15-audio"
+          last-id="last_17ImgCluster"
+          class="cantap"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 13.300; thetaLength: 30.780; thetaStart: 76.450; phiStart:131.820"
+        ></a-sphere>
+        <a-sphere
+          id="out_15ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #out_15"
+          sprite-sheet="cols:4; rows: 5; progress: 0.0;"
+          geometry="phiLength: 62.270; thetaLength: 46.410; thetaStart: 69.370; phiStart:112.520"
+        ></a-sphere>
+
+        <a-sphere
+          id="out_10Img"
+          mixin="anim"
+          class="cantap"
+          audio-id="CC10-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 10.170; thetaLength: 44.920; thetaStart: 72.780; phiStart:78.220"
+        ></a-sphere>
+        <a-sphere
+          id="out_10ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #out_10"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 47.990; thetaLength: 56.000; thetaStart: 60.000; phiStart:67.670"
+        ></a-sphere>
+
+        <!-- Middle ring layer CC06,CC07,CC03,CC00,CC08,CC09 -->
+        <a-sphere
+          id="mid_06Img"
+          mixin="anim"
+          class="cantap"
+          audio-id="CC06-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 15; thetaLength: 27; thetaStart: 30; phiStart:50"
+        ></a-sphere>
+        <a-sphere
+          id="mid_06ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #mid_06"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 75; thetaLength: 50; thetaStart: 23; phiStart:17"
+        ></a-sphere>
+
+        <a-sphere
+          id="mid_07Img"
+          mixin="anim"
+          class="cantap"
+          audio-id="CC07-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 17; thetaLength: 27; thetaStart: 32; phiStart:335"
+        ></a-sphere>
+        <a-sphere
+          id="mid_07ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #mid_07"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 75; thetaLength: 50; thetaStart: 23; phiStart:305"
+        ></a-sphere>
+        <a-sphere
+          id="mid_03Img"
+          mixin="anim"
+          audio-id="CC03-audio"
+          class="cantap"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength:  19.09;  thetaLength:  27;  thetaStart:  38.05;  phiStart:  271.95;"
+        ></a-sphere>
+        <a-sphere
+          id="mid_03ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #mid_03"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 64; thetaLength: 40; thetaStart: 37.880; phiStart:252.000"
+        ></a-sphere>
+
+        <!-- 15Years of YouTube logo layer-->
+        <a-sphere
+          id="mid_00Img"
+          mixin="anim"
+          material="src: #mid_00"
+          sprite-sheet="cols:5; rows: 10; progress: 0.0;"
+          geometry="phiLength: 45; thetaLength: 44; thetaStart: 40; phiStart:211"
+        ></a-sphere>
+
+        <a-sphere
+          id="mid_08Img"
+          mixin="anim"
+          class="cantap"
+          audio-id="CC08-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 15; thetaLength: 30; thetaStart: 38.200; phiStart:183.140"
+        ></a-sphere>
+        <a-sphere
+          id="mid_08ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #mid_08"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 60; thetaLength: 50; thetaStart: 33.650; phiStart:158"
+        ></a-sphere>
+
+        <a-sphere
+          id="mid_09Img"
+          mixin="anim"
+          class="cantap"
+          audio-id="CC09-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="phiLength: 15.130; thetaLength: 47.490; thetaStart: 35.900; phiStart:108.680"
+        ></a-sphere>
+        <a-sphere
+          id="mid_09ImgCluster"
+          mixin="image2"
+          class="cantap"
+          material="src: #mid_09"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="phiLength: 66; thetaLength: 50; thetaStart: 34.750; phiStart:95"
+        ></a-sphere>
+
+        <!-- Top ring layer CC04,CC13 -->
+        <a-plane
+          id="top_04Img"
+          click-sphere
+          class="cantap"
+          audio-id="CC04-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="height:1.5;width:3"
+          position="0.12 3.2 1.2"
+          scale="0.5 0.5 1.5"
+          rotation="80 42 0"
+        ></a-plane>
+        <a-plane
+          id="top_04ImgCluster"
+          class="cantap"
+          material="shader:flat; src: #top_04; side: double; transparent:true; opacity:0.3; alphaTest:0.2"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="height:1.5;width:3"
+          position="0.85 3.3 0.87"
+          scale="1.8 1.8 1.5"
+          rotation="-80 42 0"
+        ></a-plane>
+
+        <a-plane
+          id="top_13Img"
+          click-sphere
+          class="cantap"
+          audio-id="CC13-audio"
+          material="opacity:0;alphaTest:0.5"
+          geometry="height:1.5;width:3"
+          position="-0.899 2.783 -0.50179"
+          scale="0.3 0.8 1.5"
+          rotation="80 42 0"
+        ></a-plane>
+        <a-plane
+          id="top_13ImgCluster"
+          class="cantap"
+          material="shader:flat; src: #top_13; side: double; transparent:true; opacity:0.3; alphaTest:0.2"
+          sprite-sheet="cols:5; rows: 6; progress: 0.0;"
+          geometry="height:1.5;width:3"
+          position="-0.6 3.3 -0.715"
+          scale="1.8 1.8 1.5"
+          rotation="80 42 0"
+        ></a-plane>
+
+        <!-- last layer -->
+
+        <a-sphere
+          id="last_16ImgCluster"
+          mixin="image2"
+          class="cantap last-layer"
+          material="src: #last_1"
+          sprite-sheet="cols:4; rows: 5; progress: 0.0;"
+          geometry="phiLength:  89.49;  thetaLength:  33.24;  thetaStart:  111.87;  phiStart:0"
+        ></a-sphere>
+
+        <a-sphere
+          id="last_17ImgCluster"
+          mixin="image2"
+          class="cantap last-layer"
+          material="src: #last_2"
+          sprite-sheet="cols:4; rows: 5; progress: 0.0;"
+          geometry=" phiLength:  91.14;  thetaLength:  33.24;  thetaStart:  111.87;  phiStart:  90;  "
+        ></a-sphere>
+
+        <a-sphere
+          id="last_18ImgCluster"
+          mixin="image2"
+          class="cantap last-layer"
+          material="src: #last_3"
+          sprite-sheet="cols:4; rows: 5; progress: 0.0;"
+          geometry="phiLength:  95.38;  thetaLength:  33.24;  thetaStart:  111.87;  phiStart:  180;"
+        ></a-sphere>
+
+        <a-sphere
+          id="last_19ImgCluster"
+          mixin="image2"
+          class="cantap last-layer"
+          material="src: #last_4"
+          sprite-sheet="cols:4; rows: 5; progress: 0.0;"
+          geometry="primitive:  sphere;  phiLength:  82.85;  thetaLength:  33.24;  thetaStart:  111.87;  phiStart:  276.82;"
+        ></a-sphere>
+      </a-entity>
+      <!-- </a-entity> -->
+    </a-scene>
+    <video
+      id="videoElement"
+      autoplay
+      muted
+      playsinline
+      crossorigin="anonymous"
+    ></video>
+
+    <!--------- Desktop Screen section Starts---------->
+
+    <div class="desk-screen">
+      <div class="deskBox">
+        <img
+          src="assets/images/desk-background.png"
+          class="img-fluid deskBg"
+          alt=""
+        />
+        <div class="deskHand">
+          <img src="assets/images/desk-mob-img.png" class="img-fluid" alt="" />
+        </div>
+      </div>
+    </div>
+
+    <!--------- Desktop Screen section Ends---------->
+
+    <div class="nav-btn">
+      <button
+        id="hamburger-menu"
+        data-toggle="ham-navigation"
+        class="hamburger-menu-button"
+      >
+        <span class="hamburger-menu-button-open">Menu</span>
+      </button>
+      <nav id="ham-navigation" class="ham-menu">
+        <ul class="menu">
+          <!-- Changed button tag to anchor tag -->
+          <li>
+            <a id="musicToggle"
+              ><img src="assets/images/musicoff.png" alt="" id="musicIcon"
+            /></a>
+          </li>
+          <!-- <li>
+            <a id="onOffSound"
+              ><img src="assets/images/onOffSound.png" alt="" id="soundIcon"
+            /></a>
+          </li> -->
+          <li>
+            <a
+              id="stopFilm"
+              href="https://youtu.be/fhARzTo1VgM?si=jPGNnfEr3KnD6KwI"
+              ><img src="assets/images/neverStopFilm.png" alt=""
+            /></a>
+          </li>
+          <li>
+            <a id="tutorial"><img src="assets/images/tutorial.png" alt="" /></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <!-- <div class="main-screen"> -->
+
+    <!--------- Navigation menu section Starts---------->
+
+    <!--------- Splash section Starts---------->
+    <div id="splashScreen" class="splash bg-img center-Obj" style="z-index: 10">
+      <!-- <img
+        id="splash-logo"
+        src="https://cdn.glitch.global/1e9da372-6263-4de8-9156-5eb917844f9b/YT360_Flat02-4.png?v=1700204864317"
+      /> -->
+      <div class="overlay"></div>
+      <div class="splash-element">
+        <!-- <img src="assets/images/UI-1.gif" class="img-fluid" /> -->
+
+        <!-- <img src="assets/images/UI-1.gif" alt="" class="img-fluid" /> -->
+        <div class="center-splash">
+          <img src="assets/images/SuperfanChallenge.png" class="img-fluid" />
+          <div class="content-splash">
+            <p class="prevent-select">
+              Find your favourite creators hidden all around you 🤯
+            </p>
+          </div>
+        </div>
+        <div class="loading-dots m-auto">
+          <p style="display: none" class="prevent-select" id="tapnow">
+            Tap now
+          </p>
+          <div id="loading-pulse" class="white-dots"></div>
+          <!--  <iframe
+            src="https://lottie.host/embed/61c1dad2-f6d8-43dc-990a-3a4326bde4ed/4ifi8Cqlh5.json"
+          ></iframe> -->
+        </div>
+        <button id="zappar-placement-ui" class="clickable">ENTER</button>
+      </div>
+    </div>
+    <!--------- Instructions section Starts---------->
+    <div id="instructionScreen" class="instuctionsPage center-Obj">
+      <div class="overlay"></div>
+      <div class="slide-container">
+        <div class="slide-box">
+          <div class="slides">
+            <div class="slide active">
+              <div class="slide-sq-1">
+                <div class="steps">
+                  <div class="step-1">
+                    <div class="step-img">
+                      <!--  <iframe
+                        src="https://lottie.host/embed/002e61ac-76f3-41e9-8954-497bf280f78e/7r2VytwCGZ.json"
+                      ></iframe> -->
+                      <!--   <dotlottie-player src="./assets/steps/Step 1(anim).json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player> -->
+                      <!-- <img
+                        src="step/step-1(anim).gif"
+                        class="img-fluid ins-img"
+                      /> -->
+                    </div>
+                    <div class="step-text">
+                      <h3 class="prevent-select">STEP 01:</h3>
+                      <p class="prevent-select">
+                        Stay still while the experience loads<img
+                          src="assets/images/step-1-globe.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-sq-2">
+                <div class="steps">
+                  <div class="step-2">
+                    <div class="step-img">
+                      <!-- <img
+                        src="step/step-2(anim).gif"
+                        class="img-fluid ins-img"
+                      /> -->
+                      <!--   <iframe
+                        src="https://lottie.host/embed/f57494ff-2bab-4f87-b69a-de131c14221f/rVtbc1V4yp.json"
+                      ></iframe> -->
+                    </div>
+                    <div class="step-text">
+                      <h3 class="prevent-select">STEP 02:</h3>
+                      <p class="prevent-select">
+                        Move your phone up, down and all around to look for your
+                        fav creators<img
+                          src="assets/images/step-2-mag.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-sq-3">
+                <div class="steps">
+                  <div class="step-3">
+                    <div class="step-img">
+                      <!-- <img
+                        src="step/step-3(anim).gif"
+                        class="img-fluid ins-img"
+                      /> -->
+                      <!--  <iframe
+                        src="https://lottie.host/embed/ba624efc-b2d4-496d-a881-d101e045b02c/GV0cSza57O.json"
+                      ></iframe> -->
+                    </div>
+                    <div class="step-text">
+                      <h3 class="prevent-select">STEP 03:</h3>
+                      <p class="prevent-select">
+                        Tap on them to bring them to life<img
+                          src="assets/images/step-3-smile.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-sq-4">
+                <div class="steps">
+                  <div class="step-4">
+                    <div class="step-img">
+                      <!-- <img
+                        src="step/step-4(anim).gif"
+                        class="img-fluid ins-img"
+                      /> -->
+                      <!--  <iframe
+                        src="https://lottie.host/embed/acbc314a-20c1-4e87-a6f2-8ae49edf32c4/8BIDFwxb75.json"
+                      ></iframe> -->
+                    </div>
+                    <div class="step-text">
+                      <h3 class="prevent-select">STEP 04:</h3>
+                      <p class="prevent-select">
+                        Find as many creators as you can<img
+                          src="assets/images/step-4-smile.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-sq-5">
+                <div class="steps">
+                  <div class="step-5">
+                    <div class="step-img">
+                      <!-- <img
+                        src="step/step-5(anim).gif"
+                        class="img-fluid ins-img"
+                      /> -->
+                      <!--  <dotlottie-player src="./assets/steps/Step 1(anim).json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player> -->
+                      <!-- <iframe
+                        src="https://lottie.host/embed/4fee0ebc-3b12-4aa2-8471-9e6e159ed2c5/n8YvH22Je8.json"
+                      ></iframe> -->
+                    </div>
+                    <div class="step-text">
+                      <h3 class="prevent-select">STEP 05:</h3>
+                      <p class="prevent-select">
+                        Don't forget to flex your Superfan Certificate using our
+                        'Never Stop' Anthem<img
+                          src="assets/images/step-5-smile.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slide">
+              <div class="slide-sq-6">
+                <div class="steps">
+                  <div class="step-6">
+                    <div class="step-img">
+                      <!-- <img
+                        src="step/step-6(anim).gif"
+                        class="img-fluid ins-img"
+                      /> -->
+                      <!--  <dotlottie-player src="./assets/steps/Step 1(anim).json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" mode="normal" loop autoplay></dotlottie-player> -->
+                      <!-- <iframe
+                        src="https://lottie.host/embed/e89f6cdb-1d0f-4e79-899d-70e4bd6477ed/MdaYRdm3Ix.json"
+                      ></iframe> -->
+                    </div>
+                    <div class="step-text">
+                      <h3 class="prevent-select">STEP 06:</h3>
+                      <p class="prevent-select">
+                        If you need help, tap the<img
+                          src="assets/images/step-6-menu.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                        menu<img
+                          src="assets/images/step-6-smile.png"
+                          alt=""
+                          class="img-fluid ins-img"
+                          width="20"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="prev slide-btn">
+            <img
+              src="assets/images/back_button.png"
+              alt=""
+              class="img-fluid ins-img"
+              width="30"
+            />
+          </button>
+          <button class="next slide-btn">
+            <img
+              src="assets/images/forward_button.png"
+              alt=""
+              class="img-fluid ins-img"
+              width="30"
+            />
+          </button>
+        </div>
+        <div class="step-btn">
+          <button id="skipInstructionsButton" class="ins-btn">
+            SKIP INSTRUCTIONS <br />AND BEGIN
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- </div> -->
+
+    <!----- Creators Found Section Starts ----->
+    <div id="gameScreen" class="gamePage" style="z-index: 4">
+      <div class="overlay"></div>
+      <!-- <div class="number-box">
+          <img
+                id="creatorCount"
+                src="assets/images/score15.png"
+                alt=""
+                class="img-fluid"
+                width="150"
+              />
+        </div> -->
+
+      <div class="creators-container" id="numberBox">
+        <div class="imageWinning">
+          <img
+            src="assets/images/score15.png"
+            alt=""
+            class="img-fluid numberImg"
+            width="150"
+          />
+        </div>
+        <div class="creators-box">
+          <div class="creators-content">
+            <div class="creators-text">
+              <p class="prevent-select">The challenge is on 🔥</p>
+            </div>
+            <div id="goBtn" class="step-btn numberBtn" style="display: none">
+              <button id="letsgoButton">LET'S GO</button>
+            </div>
+            <div class="text-shadow stroke-behind">
+              <!-- <svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
+                <text x="10" y="150" class="stroke-behind">00/15</text>
+              </svg> -->
+              <!--     <p> -->
+              <!--  <span style="color: #007f38;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="155" height="60">
+                    <text x="10" y="50" id="creatorCount" class="stroke-behind">00</text>
+                    <text x="75" y="50" class="stroke-behind" style="fill: #002a95;">/15</text>
+                  </svg>
+                </span> -->
+              <!--       </p> -->
+              <!-- Please Remove h3 tag and above svg. use this image as score. For example, score00.png and score01.png for score01 and so on. -->
+              <img
+                id="creatorCount"
+                src="assets/images/score00.png"
+                alt=""
+                class="img-fluid opacityW"
+                width="150"
+              />
+            </div>
+            <!--   <h3 class="prevent-select">CREATORS FOUND</h3> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <img
+      src="assets/images/confetti.gif"
+      alt=""
+      id="confettiIframe"
+      class="img-fluid"
+      style="display: none"
+    />
+    <!-- <iframe src="https://lottie.host/embed/bf1d8dfc-880b-4f2f-9a32-29e655c53382/EmdRjHizGE.json"></iframe> -->
+    <!-- <iframe
+      style="display: none"
+      id="confettiIframe"
+      src="https://lottie.host/embed/bf1d8dfc-880b-4f2f-9a32-29e655c53382/EmdRjHizGE.json"
+    ></iframe>  -->
+
+    <!----- let's go Section Starts ----->
+    <div id="typeScreen" class="center-Obj typePage">
+      <div class="overlay"></div>
+      <div class="type-box">
+        <!-- <img src="assets/images/Comp-4.gif" class="img-fluid" /> -->
+        <!--  <iframe
+          src="https://lottie.host/embed/0b238a3e-70af-4c20-bf2b-14a5e6a42475/Oc7dupqDhi.json"
+        ></iframe> -->
+
+        <div class="input-box">
+          <p class="prevent-select">
+            Oh btw,<br />
+            we're YouTube.<br />
+            And you?
+          </p>
+          <input
+            type="text"
+            id="inputText"
+            maxlength="10"
+            placeholder="Type Your Name"
+          />
+          <!-- Changed position button inside the input-box div -->
+          <div class="type-btn-input">
+            <button id="submitButton">SUBMIT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!----- let's go Section Ends ----->
+
+    <!----- Superfan Section Starts ----->
+    <div id="superfanScreen" class="superfanPage center-Obj">
+      <div id="superfanscreen-overlay" class="overlay"></div>
+      <div id="certi-download" class="sf-box">
+        <div class="sf-card-box">
+          <div class="sf-card-img">
+            <button id="closeCard" class="close-btn-card">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="30"
+                height="30"
+                viewBox="0,0,256,256"
+              >
+                <g
+                  fill="#ffffff"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M4.99023,3.99023c-0.40692,0.00011 -0.77321,0.24676 -0.92633,0.62377c-0.15312,0.37701 -0.06255,0.80921 0.22907,1.09303l6.29297,6.29297l-6.29297,6.29297c-0.26124,0.25082 -0.36647,0.62327 -0.27511,0.97371c0.09136,0.35044 0.36503,0.62411 0.71547,0.71547c0.35044,0.09136 0.72289,-0.01388 0.97371,-0.27511l6.29297,-6.29297l6.29297,6.29297c0.25082,0.26124 0.62327,0.36648 0.97371,0.27512c0.35044,-0.09136 0.62411,-0.36503 0.71547,-0.71547c0.09136,-0.35044 -0.01388,-0.72289 -0.27512,-0.97371l-6.29297,-6.29297l6.29297,-6.29297c0.29576,-0.28749 0.38469,-0.72707 0.22393,-1.10691c-0.16075,-0.37985 -0.53821,-0.62204 -0.9505,-0.60988c-0.2598,0.00774 -0.50638,0.11632 -0.6875,0.30273l-6.29297,6.29297l-6.29297,-6.29297c-0.18827,-0.19353 -0.4468,-0.30272 -0.7168,-0.30273z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </button>
+
+            <!-- <img
+              id="superfan-img-main"
+              src="assets/images/superfan-card2.gif"
+              class="nameCard"
+              alt=""
+            /> -->
+            <img
+              style="display: none"
+              id="superfan-img-preview"
+              src="assets/images/superfan-card-img.png"
+              class="nameCard"
+              alt=""
+            />
+
+            <div class="sf-box-content">
+              <p class="cong-sf prevent-select">Congratulations</p>
+              <h1
+                class="prevent-select"
+                id="userName"
+                style="text-transform: uppercase"
+              >
+                ABHISHEK
+              </h1>
+              <p class="prevent-select cert-text">you're a certified</p>
+              <img
+                src="assets/images/superfan-img.png"
+                alt=""
+                class="img-fluid sfimg m-auto"
+                width="300"
+              />
+              <img
+                src="assets/images/hash-sf.png"
+                alt=""
+                class="img-fluid m-auto"
+                width="230"
+              />
+              <p class="prevent-select">
+                would be nothing<br />
+                without YOU 🥹
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="share-btndiv">
+          <button id="superfanButton" style="z-index: 99">SHARE</button>
+          <button style="display: none" style="z-index: 99" id="loading-share">
+            <div class="dot-pulse"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="superfanScreen-ios" class="superfanPage center-Obj">
+      <div class="overlay"></div>
+      <div id="certi-download" class="sf-box">
+        <div class="sf-card-box">
+          <div class="sf-card-img">
+            <button id="closeCard-ios" class="close-btn-card">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="30"
+                height="30"
+                viewBox="0,0,256,256"
+              >
+                <g
+                  fill="#ffffff"
+                  fill-rule="nonzero"
+                  stroke="none"
+                  stroke-width="1"
+                  stroke-linecap="butt"
+                  stroke-linejoin="miter"
+                  stroke-miterlimit="10"
+                  stroke-dasharray=""
+                  stroke-dashoffset="0"
+                  font-family="none"
+                  font-weight="none"
+                  font-size="none"
+                  text-anchor="none"
+                  style="mix-blend-mode: normal"
+                >
+                  <g transform="scale(10.66667,10.66667)">
+                    <path
+                      d="M4.99023,3.99023c-0.40692,0.00011 -0.77321,0.24676 -0.92633,0.62377c-0.15312,0.37701 -0.06255,0.80921 0.22907,1.09303l6.29297,6.29297l-6.29297,6.29297c-0.26124,0.25082 -0.36647,0.62327 -0.27511,0.97371c0.09136,0.35044 0.36503,0.62411 0.71547,0.71547c0.35044,0.09136 0.72289,-0.01388 0.97371,-0.27511l6.29297,-6.29297l6.29297,6.29297c0.25082,0.26124 0.62327,0.36648 0.97371,0.27512c0.35044,-0.09136 0.62411,-0.36503 0.71547,-0.71547c0.09136,-0.35044 -0.01388,-0.72289 -0.27512,-0.97371l-6.29297,-6.29297l6.29297,-6.29297c0.29576,-0.28749 0.38469,-0.72707 0.22393,-1.10691c-0.16075,-0.37985 -0.53821,-0.62204 -0.9505,-0.60988c-0.2598,0.00774 -0.50638,0.11632 -0.6875,0.30273l-6.29297,6.29297l-6.29297,-6.29297c-0.18827,-0.19353 -0.4468,-0.30272 -0.7168,-0.30273z"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </button>
+            <img
+              style="border-radius: 10px"
+              src=""
+              id="ios-img"
+              class="nameCard unselectable"
+              alt=""
+            />
+            <p class="ios-download unselectable">
+              Long press to download or share the certificate ⬇️
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!----- Superfan Section Ends ----->
+    <!----- Creators Found Section Ends ----->
+    <!-- UI for the user to tap to indicate they're happy with the placement -->
+
+    <!-- <img id="recenterBtn" src="./assets/clusters/reset.svg?v=1701182916166"> -->
+    <!--  <script>
+      // draw the FPS
+      (function () {
+        var script = document.createElement("script");
+        script.onload = function () {
+          var stats = new Stats();
+          document.body.appendChild(stats.dom);
+          requestAnimationFrame(function loop() {
+            stats.update();
+            requestAnimationFrame(loop);
+          });
+        };
+        script.src = "//mrdoob.github.io/stats.js/build/stats.min.js";
+        document.head.appendChild(script);
+      })();
+    </script> -->
+  </body>
+</html>
